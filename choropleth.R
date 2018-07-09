@@ -1,7 +1,10 @@
-
+# Tutorial
 # https://www.r-graph-gallery.com/327-chloropleth-map-from-geojson-with-ggplot2/
 
-# Possible data souce
+# Add on for labelling of data (undone)
+# https://stackoverflow.com/questions/22038640/labeling-center-of-map-polygons-in-r-ggplot
+
+# Possible data source for Eurobarometer
 # http://data.europa.eu/euodp/en/data/dataset/S2143_88_3_STD88_ENG
 
 install.packages(c("geojsonio", "dplyr", "broom", "ggplot2", "mapproj"))
