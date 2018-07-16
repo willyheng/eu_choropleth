@@ -7,13 +7,16 @@
 # Possible data source for Eurobarometer
 # http://data.europa.eu/euodp/en/data/dataset/S2143_88_3_STD88_ENG
 
-install.packages(c("geojsonio", "dplyr", "broom", "ggplot2", "mapproj"))
+install.packages(c("geojsonio", "dplyr", "broom", "ggplot2", "mapproj", "maptools", "rgeos", "raster"))
 
 library(geojsonio)
 library(dplyr)
 library(broom)
 library(ggplot2)
 library(mapproj)
+library(maptools)
+library(raster)
+
 
 # Obtain geojson data
 spdf <- geojson_read("https://raw.githubusercontent.com/johan/world.geo.json/master/countries.geo.json", what = "sp")
