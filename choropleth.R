@@ -7,7 +7,9 @@
 # Possible data source for Eurobarometer
 # http://data.europa.eu/euodp/en/data/dataset/S2143_88_3_STD88_ENG
 
-install.packages(c("geojsonio", "dplyr", "broom", "ggplot2", "mapproj", "maptools", "rgeos", "raster"))
+# Consider using ggmaps to improve
+
+#install.packages(c("geojsonio", "dplyr", "broom", "ggplot2", "mapproj", "maptools", "rgeos", "raster"))
 
 library(geojsonio)
 library(dplyr)
@@ -19,13 +21,15 @@ library(raster)
 
 
 # Obtain geojson data
-spdf <- geojson_read("https://raw.githubusercontent.com/johan/world.geo.json/master/countries.geo.json", what = "sp")
-spdf@data
+spdf_low_res <- geojson_read("https://raw.githubusercontent.com/johan/world.geo.json/master/countries.geo.json", what = "sp")
+
+
+spdf_hi_res <- geojson_read("https://github.com/datasets/geo-countries/blob/master/data/countries.geojson", what = "sp")
+names(spdf_hi_res@data) <- c("name", "id")
+spdf <- spdf_hi_res
 
 # List EU countries
-eu_countries_txt <- "Belgium, Greece, Lithuania, Portugal, Bulgaria, Spain, Luxembourg, Romania, Czech Republic, 
-France, Hungary, Slovenia, Denmark, Croatia, Malta, Slovakia, Germany, Italy, Netherlands, 
-Finland, Estonia, Cyprus, Austria, Sweden, Ireland, Latvia, Poland, United Kingdom"
+eu_countries_txt <- "Belgium, Greece, Lithuania, Portugal, Bulgaria, Spain, Luxembourg, Romania, Czech Republic, France, Hungary, Slovenia, Denmark, Croatia, Malta, Slovakia, Germany, Italy, Netherlands, Finland, Estonia, Cyprus, Austria, Sweden, Ireland, Latvia, Poland, United Kingdom"
 
 eu_countries <- trimws(strsplit(eu_countries_txt, ", ")[[1]])
 
@@ -54,6 +58,9 @@ spdf_fortified <- tidy(filtered_spdf[filtered_spdf@data$name %in% filtered_count
 # Read input data from csv
 data <- read.csv('poll_data.csv', stringsAsFactors = FALSE)
 names(data) <- c("country", "poll.2007", "poll.2017")
+data <- data %>%
+  filter(country %in% eu_countries)
+
 
 adj_size <- function(x, min_size = 1, max_size = 6) {
   ((x - min(x, na.rm = T))/(max(x, na.rm = T)-min(x, na.rm = T)))*(max_size - min_size) + min_size
@@ -73,9 +80,10 @@ ggplot(spdf_fortified2) +
   geom_polygon(aes(fill = diff, x = long, y = lat, group = group) , 
                size=0, alpha=0.9) +
   geom_text(aes(label = code, x = long_centre, y = lat_centre, size = font_size), show.legend = FALSE) + 
-  theme_void() +
-  scale_fill_gradient2(breaks=c(-0.4,-0.2,0,0.2), 
-                       name="Change in Trust"
+  #theme_void() +
+  scale_fill_gradient2(breaks=c(-0.4,0.1), 
+                       name="",
+                       labels = c("Worse", "Better")
   ) +
   labs(
     title = "Change of Trust in EU"
@@ -87,9 +95,16 @@ ggplot(spdf_fortified2) +
     #panel.background = element_rect(fill = "#f5f5f2", color = NA), 
     #legend.background = element_rect(fill = "#f5f5f2", color = NA),
     
-    plot.title = element_text(size= 22, hjust=0.01, color = "#4e4d47", margin = margin(b = -0.1, t = 0.4, l = 2, unit = "cm")),
+    plot.title = element_text(size= 22, hjust=0.01, color = "#4e4d47", margin = margin(b = 0.1, t = 0.4, l = 2, unit = "cm")),
     plot.subtitle = element_text(size= 17, hjust=0.01, color = "#4e4d47", margin = margin(b = -0.1, t = 0.43, l = 2, unit = "cm")),
     plot.caption = element_text( size=12, color = "#4e4d47", margin = margin(b = 0.3, r=-99, unit = "cm") ),
+    
+    axis.text.x = element_blank(),
+    axis.ticks.x = element_blank(),
+    axis.title.x = element_blank(),
+    axis.text.y = element_blank(),
+    axis.ticks.y = element_blank(),
+    axis.title.y = element_blank(),
     
     legend.position = c(1.2,0.5)
   ) +
