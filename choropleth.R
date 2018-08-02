@@ -78,7 +78,7 @@ spdf_fortified2 = spdf_fortified %>%
 # Plot diff with fancy colours
 ggplot(spdf_fortified2) +
   geom_polygon(aes(fill = diff, x = long, y = lat, group = group) , 
-               size=0, alpha=0.9) +
+               color="grey", size=0, alpha=0.9) +
   geom_text(aes(label = code, x = long_centre, y = lat_centre, size = font_size), show.legend = FALSE) + 
   #theme_void() +
   scale_fill_gradient2(breaks=c(-0.4,0.1), 
